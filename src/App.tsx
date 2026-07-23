@@ -1,8 +1,7 @@
-import { useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const vowels = new Set(['A', 'E', 'I', 'O', 'U']);
-const puzzle = 'HELLO WORLD';
 
 const getWordSegments = (phrase: string, usedLetters: string[]) => {
   return phrase.split(' ').map((word) => {
@@ -13,6 +12,9 @@ const getWordSegments = (phrase: string, usedLetters: string[]) => {
 };
 
 function App() {
+  const [puzzle, setPuzzle] = useState('HELLO WORLD');
+  const [pendingPhrase, setPendingPhrase] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [usedLetters, setUsedLetters] = useState<string[]>([]);
 
   const availableLetters = useMemo(
@@ -20,15 +22,39 @@ function App() {
     [usedLetters]
   );
 
-  const wordSegments = useMemo(() => getWordSegments(puzzle, usedLetters), [usedLetters]);
+  const wordSegments = useMemo(() => getWordSegments(puzzle, usedLetters), [puzzle, usedLetters]);
   const isSolved = useMemo(() => {
     return puzzle.split('').every((char) => char === ' ' || usedLetters.includes(char));
-  }, [usedLetters]);
+  }, [puzzle, usedLetters]);
 
   const chooseLetter = (letter: string) => {
     if (!usedLetters.includes(letter)) {
       setUsedLetters([...usedLetters, letter]);
     }
+  };
+
+  const openModal = () => {
+    setPendingPhrase('');
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const submitPuzzle = () => {
+    const trimmed = pendingPhrase.trim().toUpperCase();
+    if (!trimmed) {
+      return;
+    }
+
+    setPuzzle(trimmed);
+    setUsedLetters([]);
+    closeModal();
+  };
+
+  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setPendingPhrase(event.target.value);
   };
 
   return (
@@ -37,6 +63,38 @@ function App() {
         <h1>Wheel of Fortune</h1>
         <p>Guess letters to reveal the phrase.</p>
       </header>
+
+      <section className="panel">
+        <h2>New puzzle phrase</h2>
+        <button type="button" onClick={openModal}>
+          Enter new phrase
+        </button>
+      </section>
+
+      {isModalOpen && (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-content">
+            <h2>Enter a new phrase</h2>
+            <label htmlFor="puzzle-input">Phrase</label>
+            <input
+              id="puzzle-input"
+              type="text"
+              value={pendingPhrase}
+              onChange={onInputChange}
+              placeholder="Type the phrase to be guessed"
+              autoFocus
+            />
+            <div className="modal-actions">
+              <button type="button" onClick={submitPuzzle}>
+                Save phrase
+              </button>
+              <button type="button" onClick={closeModal} className="secondary">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="panel">
         <h2>Phrase</h2>

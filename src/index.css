@@ -135,3 +135,63 @@ header p {
   background: #f3f4f6;
   color: #374151;
 }
+
+.puzzle-form,
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.puzzle-form button,
+.modal-actions button {
+  padding: 0.75rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.modal-actions button.secondary {
+  background: #6b7280;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.48);
+  z-index: 10;
+}
+
+.modal-content {
+  width: min(90vw, 420px);
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.18);
+  padding: 1.75rem;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.modal-content label,
+.modal-content input {
+  display: block;
+  width: 100%;
+}
+
+.modal-content input {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+}

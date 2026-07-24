@@ -1,21 +1,10 @@
 import { ChangeEvent, useMemo, useState } from 'react';
-
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-const vowels = new Set(['A', 'E', 'I', 'O', 'U']);
-
-const isGuessableChar = (char: string) => /[A-Z]/.test(char);
-
-const getWordSegments = (phrase: string, usedLetters: string[]) => {
-  return phrase.split(' ').map((word) => {
-    return word.split('').map((char) => {
-      if (!isGuessableChar(char)) {
-        return char;
-      }
-
-      return usedLetters.includes(char) ? char : '_';
-    });
-  });
-};
+import {
+  vowels,
+  getAvailableLetters,
+  getWordSegments,
+  isSolvedPuzzle,
+} from './gameLogic';
 
 function App() {
   const [puzzle, setPuzzle] = useState('HELLO WORLD');
@@ -24,16 +13,12 @@ function App() {
   const [usedLetters, setUsedLetters] = useState<string[]>([]);
 
   const availableLetters = useMemo(
-    () => alphabet.filter((letter) => !usedLetters.includes(letter)),
+    () => getAvailableLetters(usedLetters),
     [usedLetters]
   );
 
   const wordSegments = useMemo(() => getWordSegments(puzzle, usedLetters), [puzzle, usedLetters]);
-  const isSolved = useMemo(() => {
-    return puzzle.split('').every(
-      (char) => !isGuessableChar(char) || usedLetters.includes(char)
-    );
-  }, [puzzle, usedLetters]);
+  const isSolved = useMemo(() => isSolvedPuzzle(puzzle, usedLetters), [puzzle, usedLetters]);
 
   const chooseLetter = (letter: string) => {
     if (!usedLetters.includes(letter)) {
